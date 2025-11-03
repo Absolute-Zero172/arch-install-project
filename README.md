@@ -13,6 +13,8 @@
     - EFI was enabled
 - The VM was then booted to the live image
 
+![The initial boot screen](./images/initial%20boot.png)
+
 ## Initial Booting Steps
 
 #### Check UEFI boot mode
@@ -21,6 +23,8 @@ First, the boot mode was checked using `cat /sys/firmware/efi/fw_platform_size`.
 #### Connect to Internet
 
 First, the network interface was tested using `ip link` which correctly showed the `enp0s3` interface from the VM. A quick test using `ping 1.1.1.1` indicated that the internet was connected and funtional within the live environment.
+
+![Testing iternet connectivity](./images/internet%20setup.png)
 
 > [!WARNING]
 > Internet functionality while live booting **does not** mean that internet will work when booted into the system. The live boot has additional tools for internet connectivity that must be installed manually. The first time I booted, I didn't have internet to install anything which was a headache. Make sure to follow the network functionality section.
@@ -42,7 +46,11 @@ The steps for this are:
     - The root partition will be linux (EXT4)
 7. Repeat steps 3-6 for both partitions
 
+![Partition setup](./images/partition%20setup.png)
+
 The next step is to format the new partitions so they align with the file system types assigned to them. Since the EFI partition is /dev/sda1, the command `mkfs.fat -F 32 /dev/sda1` formatted it properly to use FAT32. The root partition was formatted with `mkfs.ext4 /dev/sda2` to properly format it to use EXT4. 
+
+![format partitions](./images/format%20partitions.png)
 
 ## Mounting and Interacting with the New System
 
@@ -84,6 +92,9 @@ The packages on the system were updated using: `pacman -Syu`
 
 To ensure network function when booted into the system, the following command is run: `pacman -S networkmanager netctl`.
 
+> [!TIP]
+> After reboot, use `ip link` and `nmtui` to activate the ethernet interface and ensure it is properly connected
+
 #### Enable login
 
 A root password is made using the `passwd` command such that I can login to the system after reboot.
@@ -107,6 +118,9 @@ The `reboot` command is used to reboot the system. This allows a direct boot thr
 > [!TIP]
 > If anything happens wrong on the reboot, it's not too hard to recover! On my first reboot, there was no network manager, and GRUB didn't see the Arch install. If anything strange happens, and the system does not boot, use the live image again. Reboot into the image and remount the root partition (`mount /dev/sda2 /mnt`). You can modify the system files directly from the live image without needing to worry about booting into it. Once it's fixed, you can remove the live image. 
 
+
+![full system boot](./images/full%20system%20boot.png)
+
 ## Additional Requirements
 
 ### Add additional users
@@ -123,6 +137,8 @@ Then the wheel group must be given sudo permisions. To do this the `visudo` comm
 ```
 %wheel ALL=(ALL:ALL) ALL
 ```
+
+![change wheel permissions](./images/give%20wheel%20sudo.png)
 
 > [!NOTE] 
 > For my system, vi had to be installed. I didn't bother trying to change the default text editor for visudo.
@@ -143,6 +159,8 @@ I opted to install the LXQT desktop environment with the following steps:
 
 > [!WARNING]
 > sddm **must** be enabled with systemctl before running the sddm command. Otherwise, it will only display the login screen, and login attempts do not work. I'm not sure why this is, but this happened to me in my install.  
+
+![desktop](./images/desktop.png)
 
 ### Alternative Shell
 
@@ -172,7 +190,10 @@ alias grep='grep --color=auto'
 PS1='\[\e[38;5;140;1m\]\w\[\e[0m\]: \[\e[38;5;85m\]\u\[\e[0m\]\$' # custom prefix with color
 ```
 
-> [!TIP] [Bash Prompt Generator](https://bash-prompt-generator.org/) is a pretty cool tool for generating fun prompts.
+> [!TIP] 
+> [Bash Prompt Generator](https://bash-prompt-generator.org/) is a pretty cool tool for generating fun prompts.
+
+![colors](./images/colors.png)
 
 ### Add Custom Aliases
 
